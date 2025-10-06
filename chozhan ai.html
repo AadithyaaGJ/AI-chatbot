@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chozhan AI - Secure Assistant</title>
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --secondary-color: #7b1fa2;
+            --accent-color: #e1bee7;
+            --text-color: #333;
+            --light-bg: #f5f5f5;
+            --dark-bg: #121212;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .auth-btn {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .auth-btn:hover {
+            background: white;
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .chat-container, .training-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            flex: 2;
+        }
+        
+        .training-container {
+            flex: 1;
+        }
+        
+        .chat-header, .training-header {
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message {
+            align-self: flex-start;
+            background: var(--light-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 1rem;
+            background: transparent;
+            color: #222;
+        }
+        
+        .chat-input button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background: var(--secondary-color);
+        }
+        
+        .training-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .training-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .training-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-color);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .training-data {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .data-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .data-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        
+        .data-item .delete-btn {
+            color: var(--error-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .status {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .status-success {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success-color);
+        }
+        
+        .status-error {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--error-color);
+        }
+        
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .login-form button:hover {
+            background: var(--secondary-color);
+        }
+        
+        .secure-notice {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--warning-color);
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .locked-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: #666;
+        }
+        
+        /* thinking indicator shown in header when AI is preparing a reply */
+        .thinking-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 0.9rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 180ms ease, visibility 180ms;
+        }
+        .thinking-indicator.active { visibility: visible; opacity: 1; }
+        .thinking-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0.25;
+            transform: translateY(0);
+        }
+        .thinking-indicator.active .dot {
+            animation: thinking 900ms infinite ease-in-out;
+        }
+        .thinking-indicator.active .dot:nth-child(2) { animation-delay: 120ms; }
+        .thinking-indicator.active .dot:nth-child(3) { animation-delay: 240ms; }
+        @keyframes thinking {
+            0%   { opacity: 0.25; transform: translateY(0); }
+            50%  { opacity: 1;    transform: translateY(-6px); }
+            100% { opacity: 0.25; transform: translateY(0); }
+        }
+        
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--warning-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            margin-top: auto;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .chat-container, .training-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">C</div>
+            <h1>Chozhan AI</h1>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div class="auth-section">
+                <span id="userStatus">Not authenticated</span>
+                <button class="auth-btn" id="authButton">Login</button>
+            </div>
+            <!-- thinking indicator (hidden by default) -->
+            <div id="thinkingIndicator" class="thinking-indicator" aria-hidden="true" title="AI thinking">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <span>Chat with Chozhan AI</span>
+                <span>Intelligent Assistant</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    Hello! I'm Chozhan AI. How can I assist you today?
+                </div>
+            </div>
+            <div class="chat-input" style="background:transparent;">
+    <div style="display:flex;align-items:center;flex:1;background:#fff;border-radius:999px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+        <label for="userFileInput" style="cursor:pointer;display:flex;align-items:center;margin-right:10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="#0078d4" stroke-width="2" stroke-linecap="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="#e6e6e6"/></svg>
+        </label>
+        <input type="file" id="userFileInput" style="display:none;">
+        <input type="text" id="userInput" placeholder="Ask me anything..." style="flex:1;border:none;background:transparent;color:#222;font-size:16px;">
+    </div>
+    <label for="explainCheckbox" style="display:flex;align-items:center;gap:6px;margin-left:10px;color:#333;font-size:0.9rem;">
+        <input type="checkbox" id="explainCheckbox"> Explain
+    </label>
+    <button id="sendBtn" style="margin-left:8px;padding:12px 24px;border-radius:999px;background:#0078d4;color:#fff;font-weight:600;border:none;cursor:pointer;">Send</button>
+</div>
+        </div>
+        
+        <div class="training-container" id="trainingContainer" style="display: none;">
+            <div class="training-header">
+                <span>AI Training Environment</span>
+                <span id="accessStatus">🔒 Locked</span>
+            </div>
+            <div class="training-content" id="trainingContent">
+                <!-- This will be replaced based on authentication status -->
+                <div class="locked-section">
+                    <div class="lock-icon">🔒</div>
+                    <h3>Training Data Protected</h3>
+                    <p>You need administrator privileges to view and modify training data.</p>
+                    <button class="btn btn-primary" id="requestAccessBtn" style="margin-top: 15px;">Request Access</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="login-modal" id="loginModal">
+        <div class="login-form">
+            <h2>Admin Authentication</h2>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button id="loginButton">Login</button>
+            <div class="secure-notice">
+                <p>Training data is protected and requires authorization to access.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Chozhan AI &copy; 2023 | Secure AI Assistant with Protected Training Data</p>
+    </footer>
+
+    <script>
+        // Persistent training data (localStorage-backed)
+        const STORAGE_KEY = 'chozhan_trainingData_v1';
+        const DEFAULT_TRAINING = [
+            { question: "hello", answer: "Hello! How can I assist you today?", references: [] },
+            { question: "hi", answer: "Hi there! What can I do for you?", references: [] },
+            { question: "what is your name", answer: "I'm Chozhan AI, your intelligent assistant.", references: [] },
+            { question: "how are you", answer: "I'm functioning optimally, thank you for asking!", references: [] },
+            { question: "what can you do", answer: "I can answer questions, help with tasks, and learn from our interactions.", references: [] }
+        ];
+        
+        let trainingData = [];
+        
+        function loadTrainingData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    trainingData = DEFAULT_TRAINING.slice();
+                    saveTrainingData();
+                    return;
+                }
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) trainingData = parsed;
+                else trainingData = DEFAULT_TRAINING.slice();
+            } catch (e) {
+                console.error('Failed to load training data:', e);
+                trainingData = DEFAULT_TRAINING.slice();
+            }
+        }
+        
+        function saveTrainingData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(trainingData));
+            } catch (e) {
+                console.error('Failed to save training data:', e);
+            }
+        }
+        
+        // Admin password (in a real app, this would be handled server-side)
+        const ADMIN_PASSWORD = "ChozhanAI2023";
+        
+        // Authentication state
+        let isAuthenticated = false;
+        
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendBtn'); // Corrected ID
+        const trainingContent = document.getElementById('trainingContent');
+        const authButton = document.getElementById('authButton');
+        const userStatus = document.getElementById('userStatus');
+        const accessStatus = document.getElementById('accessStatus');
+        const loginModal = document.getElementById('loginModal');
+        const adminPassword = document.getElementById('adminPassword');
+        const loginButton = document.getElementById('loginButton');
+        const requestAccessBtn = document.getElementById('requestAccessBtn');
+        const thinkingIndicator = document.getElementById('thinkingIndicator');
+        
+            // Load persisted training data, then initialize UI based on authentication state
+            loadTrainingData();
+            updateAuthUI();
+        
+        // Add message to chat (user messages use this; AI messages will stream)
+        function addMessage(text, sender) {
+            if (sender === 'ai') {
+                // streaming handled by streamAIResponse
+                streamAIResponse(text);
+                return;
+            }
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'user-message');
+            messageElement.textContent = text;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // small helper: convert URLs to anchors and preserve new lines
+        function linkify(text) {
+            if (!text) return '';
+            const esc = escapeHtml(text);
+            // find urls
+            return esc.replace(/(https?:\/\/[^\s]+)/g, function(url) {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+            }).replace(/\n/g, '<br>');
+        }
+        
+        // toggle thinking indicator in header
+        function setThinking(on) {
+            const el = document.getElementById('thinkingIndicator');
+            if (!el) return;
+            if (on) {
+                el.classList.add('active');
+                el.setAttribute('aria-hidden', 'false');
+            } else {
+                el.classList.remove('active');
+                el.setAttribute('aria-hidden', 'true');
+            }
+        }
+        
+        // Stream AI response into the chat line-by-line (or sentence-by-sentence)
+        async function streamAIResponse(text, maxTotalMs = 1600) {
+            if (!chatMessages) return;
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'ai-message');
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+            // split into lines or sentences for nicer streaming
+            let segments = text.split('\n').map(s => s.trim()).filter(Boolean);
+            if (segments.length === 0) segments = [''];
+            else if (segments.length === 1) {
+                const sentenceMatches = text.match(/[^.!?]+[.!?]?(\s|$)/g);
+                if (sentenceMatches && sentenceMatches.length > 1) {
+                    segments = sentenceMatches.map(s => s.trim()).filter(Boolean);
+                }
+            }
+    
+            const reserved = 140;
+            const availableMs = Math.max(200, maxTotalMs - reserved);
+            const perSeg = Math.max(70, Math.floor(availableMs / segments.length));
+    
+            let accumulated = '';
+            try {
+                for (let i = 0; i < segments.length; i++) {
+                    if (accumulated) accumulated += '\n';
+                    accumulated += segments[i];
+                    messageElement.innerHTML = linkify(accumulated);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    const extra = (i === segments.length - 1) ? reserved : 0;
+                    await new Promise(res => setTimeout(res, perSeg + extra));
+                }
+            } catch (e) {
+                // on error render full text
+                messageElement.innerHTML = linkify(text);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        // override sendMessage to show thinking indicator and stream response
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            // add user message
+            const userMsgEl = document.createElement('div');
+            userMsgEl.classList.add('message', 'user-message');
+            userMsgEl.textContent = message;
+            chatMessages.appendChild(userMsgEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            userInput.value = '';
+    
+            // show thinking
+            setThinking(true);
+            try {
+                // tiny pre-think pause so indicator is visible
+                await new Promise(res => setTimeout(res, 120));
+                let response = '';
+                // check if user responded with a clarification choice (e.g., '1' or '2')
+                const choice = message.trim();
+                if ((choice === '1' || choice === '2') && window.__lastClarify && Array.isArray(window.__lastClarify.options)) {
+                    const idx = parseInt(choice, 10) - 1;
+                    const chosen = window.__lastClarify.options[idx];
+                    if (chosen) {
+                        response = formatAnswerWithVideo(chosen, { confidence: window.__lastClarify.confidence });
+                        // clear last clarify after using
+                        window.__lastClarify = null;
+                    } else {
+                        response = "I don't have that option available. Please provide more details.";
+                    }
+                } else {
+                    response = generateResponse(message);
+                }
+                // stream with a cap so replies finish quickly
+                await streamAIResponse(response, 1600);
+            } catch (err) {
+                const errEl = document.createElement('div');
+                errEl.classList.add('message', 'ai-message');
+                errEl.textContent = "Sorry, something went wrong while preparing the response.";
+                chatMessages.appendChild(errEl);
+            } finally {
+                setThinking(false);
+            }
+        }
+        
+        // Extract YouTube ID helper
+        function extractYouTubeID(url) {
+            if (!url) return null;
+            // common youtube URL patterns
+            const m = url.match(/(?:youtube\.com\/.*v=|youtube\.com\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+            return m ? m[1] : null;
+        }
+        
+        // --- Improved interpretation helpers and response generation ---
+        const STOPWORDS = new Set(['the','is','at','which','on','and','a','an','of','for','to','in','with','that','this','it','as','are','was','be','by','from','or','but','if','you','i','me','my','your','we','us','our']);
+
+        function tokenize(text) {
+            if (!text) return [];
+            const clean = text.toLowerCase().replace(/["'`<>#$%^&*=+~\/\\()\[\]{}:;,_|<>@]/g, ' ');
+            return clean.split(/\s+/).map(t => t.trim()).filter(t => t && !STOPWORDS.has(t));
+        }
+
+        function simpleStem(token) {
+            // very small heuristic stemmer: remove common endings
+            return token.replace(/(ing|ed|ly|es|s)$/,'');
+        }
+
+        function termFreq(tokens) {
+            const m = new Map();
+            for (let t of tokens) {
+                t = simpleStem(t);
+                m.set(t, (m.get(t) || 0) + 1);
+            }
+            return m;
+        }
+
+        function cosineSimilarity(mapA, mapB) {
+            let dot = 0, normA = 0, normB = 0;
+            for (const v of mapA.values()) normA += v*v;
+            for (const v of mapB.values()) normB += v*v;
+            for (const [k, v] of mapA.entries()) {
+                if (mapB.has(k)) dot += v * mapB.get(k);
+            }
+            if (normA === 0 || normB === 0) return 0;
+            return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+        }
+
+        function normalizedLevenshtein(a, b) {
+            if (!a && !b) return 1;
+            if (!a || !b) return 0;
+            const la = a.length, lb = b.length;
+            const dp = Array.from({length: la+1}, () => new Array(lb+1).fill(0));
+            for (let i=0;i<=la;i++) dp[i][0]=i;
+            for (let j=0;j<=lb;j++) dp[0][j]=j;
+            for (let i=1;i<=la;i++){
+                for (let j=1;j<=lb;j++){
+                    const cost = a[i-1] === b[j-1] ? 0 : 1;
+                    dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+                }
+            }
+            const dist = dp[la][lb];
+            const maxLen = Math.max(la, lb);
+            return 1 - (dist / Math.max(1, maxLen));
+        }
+
+        // Generate AI response using combined similarity metrics and clarification when needed
+        function generateResponse(input) {
+            const raw = (input || '').trim();
+            if (!raw) return "Could you provide a question or some context?";
+
+            const lowerInput = raw.toLowerCase();
+            const inputTokens = tokenize(lowerInput).map(simpleStem);
+            const inputTf = termFreq(inputTokens);
+
+            // Precompute tokenized training questions
+            const scored = [];
+            for (const data of trainingData) {
+                const q = (data.question || '').toLowerCase();
+                const qTokens = tokenize(q).map(simpleStem);
+                const qTf = termFreq(qTokens);
+
+                const cos = cosineSimilarity(inputTf, qTf);
+                const lev = normalizedLevenshtein(lowerInput.replace(/[.,?!]/g,''), q.replace(/[.,?!]/g,''));
+
+                // containment boosts
+                let boost = 0;
+                if (lowerInput.includes(q) && q.length > 2) boost += 0.18;
+                if (q.includes(lowerInput) && lowerInput.length > 2) boost += 0.18;
+
+                // extra boost if many tokens overlap for short queries
+                if (inputTokens.length <= 3) {
+                    let overlap = 0;
+                    for (const it of inputTokens) if (qTokens.includes(it)) overlap++;
+                    if (overlap > 0) boost += Math.min(0.35, 0.15 * overlap);
+                }
+
+                const score = (0.65 * cos) + (0.35 * lev) + boost;
+                scored.push({ data, score, cos, lev });
+            }
+
+            scored.sort((a,b) => b.score - a.score);
+            const best = scored[0] || null;
+            const second = scored[1] || null;
+
+            const bestScore = best ? best.score : 0;
+
+            // If the user asked for an explanation (step-by-step interpretation), provide detailed rationale
+            const explain = document.getElementById('explainCheckbox') && document.getElementById('explainCheckbox').checked;
+            if (explain) {
+                return generateChatGPTStyleResponse(raw, scored);
+            }
+
+            // High confidence -> give direct answer
+            if (best && bestScore >= 0.75) {
+                const confidence = Math.round(bestScore * 100);
+                return formatAnswerWithVideo(best.data, { confidence });
+            }
+
+            // For short queries (single word or short phrase) be more permissive
+            const shortQuery = inputTokens.length <= 3;
+            const directThreshold = shortQuery ? 0.35 : 0.75;
+            const suggestThreshold = shortQuery ? 0.25 : 0.45;
+
+            // Direct answer for permissive threshold
+            if (best && bestScore >= directThreshold) {
+                const confidence = Math.round(bestScore * 100);
+                return formatAnswerWithVideo(best.data, { confidence });
+            }
+
+            // Moderate confidence -> offer choice/clarification with suggestions
+            if (best && bestScore >= suggestThreshold) {
+                const confidence = Math.round(bestScore * 100);
+                let suggestionText = `I may have a match (confidence: ${confidence}%). Did you mean:`;
+                suggestionText += `\n1) ${best.data.question}`;
+                if (second && second.score > 0.25) suggestionText += `\n2) ${second.data.question}`;
+                suggestionText += `\n\nReply with '1' or '2', or provide more details.`;
+
+                // Store recent-suggestions so next user reply like '1' or '2' can select it
+                window.__lastClarify = { options: [best.data, (second && second.data) ? second.data : null], confidence };
+                return suggestionText;
+            }
+
+            // Low confidence -> ask for clarification and show top suggestions
+            if (!best || bestScore < 0.45) {
+                let text = "I don't have a confident match for that yet. Could you rephrase or give more details?";
+                if (scored.length) {
+                    const top = scored.slice(0,3).filter(s => s.score > 0.15).map((s,i) => `${i+1}) ${s.data.question} (${Math.round(s.score*100)}%)`).join('\n');
+                    if (top) text += `\nPossible related questions:\n${top}`;
+                }
+                return text;
+            }
+        }
+
+        function formatAnswerWithVideo(data, opts = {}) {
+            const confidence = opts.confidence;
+            // support new "references" array and legacy "video" string
+            const refs = (data && data.references && Array.isArray(data.references)) ? data.references.slice() :
+                         (data && data.video) ? [data.video] : [];
+            let out = data.answer || '';
+            if (typeof confidence === 'number') {
+                out = `${out}\n(Confidence: ${confidence}%)`;
+            }
+            if (!refs.length) return out;
+            // join references into readable lines
+            const lines = refs.map(r => r).join('\n');
+            return `${out}\nReferences:\n${lines}`;
+        }
+
+        // Create a ChatGPT-style explanatory response: analyze top matches and explain line-by-line
+        function generateChatGPTStyleResponse(rawInput, scoredList) {
+            const intro = `I'll explain how I interpreted your input and which training items were the best matches:`;
+            if (!scoredList || !scoredList.length) return intro + `\nNo training data available to analyze.`;
+
+            // take top 3 candidates
+            const top = scoredList.slice(0,3);
+            let body = '';
+            body += `\nUser input: "${rawInput}"\n`;
+            top.forEach((s, idx) => {
+                const q = s.data.question || '(no question)';
+                const a = s.data.answer || '(no answer)';
+                body += `\n${idx+1}) Question in training: "${q}"\n`;
+                body += `   - Match score: ${Math.round(s.score*100)}% (cosine: ${Math.round(s.cos*100)}%, levenshtein: ${Math.round(s.lev*100)}%)\n`;
+                body += `   - Why it matched: `;
+                const reasons = [];
+                if (s.cos > 0.2) reasons.push('shared important words');
+                if (s.lev > 0.5) reasons.push('textual similarity');
+                if (rawInput.toLowerCase().includes((s.data.question||'').toLowerCase())) reasons.push('input contains stored question');
+                if (reasons.length === 0) reasons.push('weak similarity signals (low confidence)');
+                body += reasons.join(', ') + '\n';
+                body += `   - Stored answer preview: "${a.length>120? a.slice(0,120)+'...': a }"\n`;
+            });
+
+            body += `\nHow to get the best answer:\n - Try to be specific and include keywords (names, dates, verbs).\n - If you see multiple suggestions above, reply with the option number to choose one.\n`;
+            return intro + '\n' + body;
+        }
+
+        // dataset-related code removed per user request
+        
+        // Update UI based on authentication state
+        function updateAuthUI() {
+            const trainingContainer = document.getElementById('trainingContainer');
+            if (isAuthenticated) {
+                userStatus.textContent = "Admin User";
+                authButton.textContent = "Logout";
+                accessStatus.textContent = "🔓 Unlocked";
+                renderTrainingInterface();
+                // Show the training container
+                trainingContainer.style.display = 'block';
+            } else {
+                userStatus.textContent = "Not authenticated";
+                authButton.textContent = "Login";
+                accessStatus.textContent = "🔒 Locked";
+                renderLockedInterface();
+                // Hide the training container
+                trainingContainer.style.display = 'none';
+            }
+        }
+        
+        // Render the training interface for authenticated users
+        function renderTrainingInterface() {
+            trainingContent.innerHTML = `
+                <div class="training-form">
+                    <div class="form-group">
+                        <label for="questionInput">Question/Pattern</label>
+                        <input type="text" id="questionInput" placeholder="Enter a question or pattern">
+                    </div>
+                    <div class="form-group">
+                        <label for="answerInput">Response</label>
+                        <textarea id="answerInput" placeholder="Enter the AI's response"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="refsInput">Reference URLs (optional)</label>
+                        <textarea id="refsInput" placeholder="Paste one or more URLs (YouTube, website, LinkedIn, Instagram, etc.). Separate by newline or comma" style="min-height:60px"></textarea>
+                    </div>
+                    <div class="training-actions">
+                        <button class="btn btn-primary" id="addDataButton">Add Training Data</button>
+                        <button class="btn btn-secondary" id="trainButton">Train AI</button>
+                    </div>
+                    <div id="trainingStatus" class="status"></div>
+                </div>
+                
+                <!-- dataset upload removed by request -->
+
+                <div class="training-data">
+                    <h3>Training Data (${trainingData.length} items)</h3>
+                    <div class="data-list" id="dataList">
+                        <!-- Training data will appear here -->
+                    </div>
+                </div>
+            `;
+            
+            // Re-attach event listeners for the new elements
+            document.getElementById('addDataButton').addEventListener('click', addTrainingData);
+            document.getElementById('trainButton').addEventListener('click', trainAI);
+            // dataset upload handlers removed
+            
+            // Add enter key support for the form
+            document.getElementById('questionInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTrainingData();
+                }
+            });
+            
+            // Render the training data
+            setTimeout(() => {
+                renderTrainingData();
+            }, 100);
+        }
+        
+        // Render the locked interface for unauthenticated users
+        function renderLockedInterface() {
+            trainingContent.innerHTML = `
+                <div class="locked-section">
+                    <div class="lock-icon">🔒</div>
+                    <h3>Training Data Protected</h3>
+                    <p>You need administrator privileges to view and modify training data.</p>
+                    <button class="btn btn-primary" id="requestAccessBtn" style="margin-top: 15px;">Request Access</button>
+                </div>
+            `;
+            
+            // Re-attach event listener
+            document.getElementById('requestAccessBtn').addEventListener('click', showLoginModal);
+        }
+        
+        // Add training data
+        function addTrainingData() {
+            const questionInput = document.getElementById('questionInput');
+            const answerInput = document.getElementById('answerInput');
+            const refsInput = document.getElementById('refsInput');
+
+            if (!questionInput || !answerInput) {
+                showStatus('Training form not available.', 'error');
+                return;
+            }
+
+            const question = questionInput.value.trim();
+            const answer = answerInput.value.trim();
+
+            if (question === '' || answer === '') {
+                showStatus('Please fill in both question and response fields.', 'error');
+                return;
+            }
+
+            // parse references: split by newline / comma, keep non-empty entries
+            let raw = refsInput ? refsInput.value.trim() : '';
+            let refs = [];
+            if (raw) {
+                refs = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            }
+
+            trainingData.push({ question, answer, references: refs });
+            saveTrainingData();
+            renderTrainingData();
+
+            questionInput.value = '';
+            answerInput.value = '';
+            if (refsInput) refsInput.value = '';
+
+            showStatus('Training data added successfully!', 'success');
+            updateTrainingDataCount();
+        }
+        
+        // Render training data list - FIXED VERSION WITH WORKING DELETE
+        function renderTrainingData() {
+            const dataList = document.getElementById('dataList');
+            if (!dataList) return;
+            
+            dataList.innerHTML = '';
+            
+            if (trainingData.length === 0) {
+                dataList.innerHTML = '<div class="data-item">No training data available. Add some using the form above.</div>';
+                return;
+            }
+            
+            trainingData.forEach((data, index) => {
+                const dataItem = document.createElement('div');
+                dataItem.classList.add('data-item');
+                
+                // build HTML for references (support new array or legacy single video)
+                let refs = [];
+                if (Array.isArray(data.references)) refs = data.references.slice();
+                else if (data.video) refs = [data.video];
+                let refsHtml = '';
+                if (refs.length) {
+                    refsHtml = '<div style="margin-left:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;">' +
+                               refs.map(r => `<a href="${escapeHtml(r)}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem;word-break:break-all;max-width:200px;">${escapeHtml(r)}</a>`).join('') +
+                               '</div>';
+                }
+                
+                dataItem.innerHTML = `
+                    <div style="display:flex; gap:12px; align-items:flex-start; flex:1;">
+                        <div style="flex:1;">
+                            <strong>Q:</strong> ${escapeHtml(data.question)}<br>
+                            <strong>A:</strong> ${escapeHtml(data.answer)}
+                        </div>
+                        ${refsHtml}
+                    </div>
+                    <button class="delete-btn" data-index="${index}" title="Delete this training data" style="margin-left:10px;background:none;border:none;cursor:pointer;font-size:1.5rem;color:#f44336;padding:0 5px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;">×</button>
+                `;
+                
+                dataList.appendChild(dataItem);
+            });
+            
+            // Add event listeners to delete buttons - FIXED VERSION
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const index = parseInt(this.getAttribute('data-index'));
+                    if (isNaN(index) || index < 0 || index >= trainingData.length) {
+                        showStatus('Error: Invalid data index', 'error');
+                        return;
+                    }
+                    
+                    // Confirm deletion
+                    if (confirm('Are you sure you want to delete this training data?\n\nQuestion: ' + trainingData[index].question)) {
+                        // Remove the item from trainingData array
+                        trainingData.splice(index, 1);
+                        // Save to localStorage
+                        saveTrainingData();
+                        // Re-render the list
+                        renderTrainingData();
+                        showStatus('Training data deleted successfully!', 'success');
+                        
+                        // Update the training data count in the header
+                        updateTrainingDataCount();
+                    }
+                });
+            });
+        }
+
+        // Update training data count in the header
+        function updateTrainingDataCount() {
+            const trainingHeader = document.querySelector('.training-data h3');
+            if (trainingHeader) {
+                trainingHeader.textContent = `Training Data (${trainingData.length} items)`;
+            }
+        }
+        
+        // Simple HTML escape to avoid injection in list rendering
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+        
+        // Train AI (simulated)
+        function trainAI() {
+            showStatus('Training AI with new data...', 'success');
+            
+            // Simulate training process
+            setTimeout(() => {
+                showStatus('AI training completed successfully!', 'success');
+            }, 1500);
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            const trainingStatus = document.getElementById('trainingStatus');
+            if (!trainingStatus) return;
+            
+            trainingStatus.textContent = message;
+            trainingStatus.className = 'status';
+            trainingStatus.classList.add(`status-${type}`);
+            
+            // Clear status after 3 seconds
+            setTimeout(() => {
+                trainingStatus.textContent = '';
+                trainingStatus.className = 'status';
+            }, 3000);
+        }
+        
+        // Show login modal
+        function showLoginModal() {
+            loginModal.style.display = 'flex';
+            adminPassword.value = '';
+            adminPassword.focus();
+        }
+        
+        // Hide login modal
+        function hideLoginModal() {
+            loginModal.style.display = 'none';
+        }
+        
+        // Authenticate user
+        function authenticate() {
+            if (adminPassword.value === ADMIN_PASSWORD) {
+                isAuthenticated = true;
+                updateAuthUI();
+                hideLoginModal();
+                showStatus('Authentication successful! Training data unlocked.', 'success');
+            } else {
+                alert('Incorrect password. Access denied.');
+                adminPassword.value = '';
+                adminPassword.focus();
+            }
+        }
+        
+        // Logout user
+        function logout() {
+            isAuthenticated = false;
+            updateAuthUI();
+            showStatus('Logged out successfully. Training data is now protected.', 'success');
+        }
+        
+        // Event Listeners
+        // Ensure sendButton exists before adding the listener
+        if (sendButton) {
+            sendButton.addEventListener('click', sendMessage);
+        }
+        
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        authButton.addEventListener('click', function() {
+            if (isAuthenticated) {
+                logout();
+            } else {
+                showLoginModal();
+            }
+        });
+        
+        loginButton.addEventListener('click', authenticate);
+        
+        adminPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                authenticate();
+            }
+        });
+        
+        // requestAccessBtn may not exist at script-run time (locked UI renders it later) — guard before attaching
+        if (requestAccessBtn) {
+            requestAccessBtn.addEventListener('click', showLoginModal);
+        }
+        
+        // Close modal when clicking outside
+        loginModal.addEventListener('click', function(e) {
+            if (e.target === loginModal) {
+                hideLoginModal();
+            }
+        });
+        
+        // Initialize with a welcome message
+        setTimeout(() => {
+            setThinking(true);
+            streamAIResponse("You can train me with new questions and responses using the training panel, but it requires administrator access.")
+                .then(() => setThinking(false))
+                .catch(() => setThinking(false));
+        }, 800);
+
+        // Diagnostic snippet - paste into DevTools Console
+        (function(){
+          try {
+            console.log('--- Chozhan AI Diagnostic ---');
+            const sendBtn = document.getElementById('sendBtn');
+            const loginBtn = document.getElementById('loginButton');
+            const authBtn = document.getElementById('authButton');
+            console.log('sendBtn exists:', !!sendBtn, sendBtn);
+            console.log('loginButton exists:', !!loginBtn, loginBtn);
+            console.log('authButton exists:', !!authBtn, authBtn);
+
+            console.log('sendMessage function:', typeof window.sendMessage);
+            console.log('authenticate function:', typeof window.authenticate);
+            console.log('generateResponse function:', typeof window.generateResponse);
+
+            // Show if event listeners can be seen (Chrome has getEventListeners)
+            if (window.getEventListeners && sendBtn) {
+              console.log('sendBtn listeners:', getEventListeners(sendBtn));
+            } else if (sendBtn) {
+              console.log('sendBtn: (use Chrome DevTools \"Event Listeners\" panel for details)');
+            }
+
+            // Try calling sendMessage safely with a test value (won't send anything external)
+            if (window.sendMessage && document.getElementById('userInput')) {
+              const prev = document.getElementById('userInput').value;
+              document.getElementById('userInput').value = 'diagnostic test';
+              console.log('Calling sendMessage() to test — watch console for errors and the chat area for a new message.');
+              try { sendMessage(); } catch (e) { console.error('sendMessage threw:', e); }
+              setTimeout(()=> { document.getElementById('userInput').value = prev; }, 2000);
+            } else {
+              console.log('sendMessage or userInput not present - cannot auto-test send handler.');
+            }
+
+            // Check training data + corpus in localStorage
+            try {
+              console.log('trainingData (length):', (window.trainingData && trainingData.length) || 'no trainingData in window');
+              const t = localStorage.getItem('chozhan_trainingData_v1');
+              console.log('localStorage chozhan_trainingData_v1 present:', !!t);
+              const c = localStorage.getItem('chozhan_corpus_v1');
+              console.log('localStorage chozhan_corpus_v1 present:', !!c, c ? JSON.parse(c).length + ' passages' : '');
+            } catch (e) { console.error('localStorage inspect error', e); }
+
+            // show first few training entries
+            console.log('trainingData (first 5):', (window.trainingData || []).slice(0,5));
+            // show corpus summary
+            const corpusRaw = localStorage.getItem('chozhan_corpus_v1');
+            if (corpusRaw) {
+              const corpus = JSON.parse(corpusRaw);
+              console.log('Corpus size:', corpus.length);
+              console.log('Sample passage:', corpus[0] && corpus[0].text && corpus[0].text.slice(0,400));
+            } else {
+              console.log('No corpus indexed yet (localStorage chozhan_corpus_v1 missing).');
+            }
+
+            console.log('--- End diagnostic ---');
+          } catch (err) {
+            console.error('Diagnostic failed:', err);
+          }
+        })();
+
+        // Diagnostic: inspect trainingData and per-item scores for a test query
+        (function(){
+          try {
+            const test = 'what is your name'; // <-- replace with your exact test input
+            console.log('Test input:', test);
+            console.log('trainingData length:', (window.trainingData || []).length);
+            console.log('trainingData sample (first 10):', (window.trainingData || []).slice(0,10));
+
+            const lower = test.toLowerCase().trim();
+            const inputTokens = (window.tokenize ? tokenize(lower).map(simpleStem) : []);
+            const inputTf = (window.termFreq ? termFreq(inputTokens) : null);
+
+            if (!inputTf) { console.warn('termFreq or tokenize not found on page'); }
+
+            const scored = [];
+            (window.trainingData || []).forEach(data => {
+              const dq = (data.question || '').toLowerCase().trim();
+              const qTokens = tokenize ? tokenize(dq).map(simpleStem) : [];
+              const qTf = termFreq ? termFreq(qTokens) : null;
+              const cos = (qTf && inputTf) ? cosineSimilarity(inputTf, qTf) : 0;
+              const lev = normalizedLevenshtein ? normalizedLevenshtein(lower.replace(/[.,?!]/g,''), dq.replace(/[.,?!]/g,'')) : 0;
+              let boost = 0;
+              if (lower.includes(dq) && dq.length > 2) boost += 0.18;
+              if (dq.includes(lower) && lower.length > 2) boost += 0.18;
+              if (inputTokens.length <= 3) {
+                let overlap = 0;
+                for (const it of inputTokens) if (qTokens.includes(it)) overlap++;
+                if (overlap > 0) boost += Math.min(0.35, 0.15 * overlap);
+              }
+              const score = (0.65 * cos) + (0.35 * lev) + boost;
+              scored.push({ question: data.question, answer: data.answer, score, cos, lev, boost, qTokens });
+            });
+
+            scored.sort((a,b) => b.score - a.score);
+            console.log('Top matches (top 10):', scored.slice(0,10));
+            console.log('Best overall score:', scored[0] ? scored[0].score : null);
+            // Show what generateResponse would return:
+            if (window.generateResponse) console.log('generateResponse output:', generateResponse(test));
+          } catch (err) {
+            console.error('Diagnostic error:', err);
+          }
+        })();
+    </script>
+</body>
+</html>
